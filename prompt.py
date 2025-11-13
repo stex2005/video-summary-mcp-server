@@ -1,5 +1,5 @@
 """
-Prompt building module for different summary styles.
+Prompt building module for different summary and analysis styles.
 """
 
 
@@ -37,4 +37,57 @@ def build_summary_prompt(style="short"):
     }
     
     return prompts.get(style, prompts["short"])
+
+
+def build_analysis_prompt(style="short"):
+    """
+    Build a prompt for image analysis based on style.
+    
+    Args:
+        style: Analysis style - "short", "detailed", "technical", or "descriptive"
+    
+    Returns:
+        Prompt string for the image analysis task
+    """
+    prompts = {
+        "short": (
+            "Analyze this image. "
+            "Describe what you see, including key objects, people, scenes, and any notable details. "
+            "Keep it concise."
+        ),
+        "detailed": (
+            "Provide a detailed analysis of this image. "
+            "Describe all visible objects, people, scenes, colors, composition, lighting, "
+            "and any other relevant details. Include context and potential interpretations."
+        ),
+        "technical": (
+            "Provide a technical analysis of this image. "
+            "Focus on objective observations: objects, colors, composition, lighting conditions, "
+            "image quality, and measurable characteristics. Use bullet points for clarity."
+        ),
+        "descriptive": (
+            "Provide a rich, descriptive analysis of this image. "
+            "Describe the scene, atmosphere, mood, and visual elements in detail. "
+            "Include artistic and aesthetic observations."
+        )
+    }
+    
+    return prompts.get(style, prompts["short"])
+
+
+def build_count_prompt(object_name):
+    """
+    Build a prompt for counting specific objects in an image.
+    
+    Args:
+        object_name: Name of the object to count
+    
+    Returns:
+        Prompt string for the counting task
+    """
+    return (
+        f"Count how many {object_name} are visible in this image. "
+        f"Be precise and careful. Respond with only a number, or '0' if none are found. "
+        f"If you cannot determine the exact count, provide your best estimate followed by a brief explanation."
+    )
 

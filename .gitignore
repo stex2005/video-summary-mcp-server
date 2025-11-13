@@ -51,3 +51,18 @@ videos/*.wmv
 # Keep the .gitkeep file
 !videos/.gitkeep
 
+# Image files (can be large)
+images/*.jpg
+images/*.jpeg
+images/*.png
+images/*.bmp
+images/*.tiff
+images/*.tif
+images/*.webp
+images/*.gif
+images/*.pbm
+images/*.pgm
+images/*.ppm
+# Keep the .gitkeep file
+!images/.gitkeep
+
