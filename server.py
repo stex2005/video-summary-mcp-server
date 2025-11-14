@@ -2,9 +2,11 @@
 MCP server for video summarization and image analysis using GPT-4.1 Vision.
 """
 
+from typing import Optional, Union
 from fastmcp import FastMCP
 from summarizer import (
     summarize_video as summarize_video_core,
+    analyze_video_with_prompt as analyze_video_with_prompt_core,
     analyze_image as analyze_image_core,
     count_items as count_items_core,
     analyze_image_with_prompt as analyze_image_with_prompt_core,
@@ -16,18 +18,55 @@ mcp = FastMCP("video-summarizer")
 
 
 @mcp.tool()
-def summarize_video(video_path: str, style: str = "short") -> str:
+def summarize_video(video_path: str, style: str = "short", start_time: Optional[Union[float, int, str]] = None, end_time: Optional[Union[float, int, str]] = None) -> str:
     """
     Summarize the content of a video using GPT-4.1 Vision.
     
     Args:
         video_path: Local path to the video file
         style: Summary style - "short", "timeline", "detailed", or "technical" (default: "short")
+        start_time: Optional start time in seconds (None for beginning of video)
+        end_time: Optional end time in seconds (None for end of video)
     
     Returns:
         Text summary of the video
     """
-    return summarize_video_core(video_path, style=style)
+    # Convert inputs to float if needed (for MCP compatibility)
+    if start_time is not None:
+        start_time = float(start_time)
+    if end_time is not None:
+        end_time = float(end_time)
+    
+    return summarize_video_core(video_path, style=style, start_time=start_time, end_time=end_time)
+
+
+@mcp.tool()
+def analyze_video_with_prompt(video_path: str, custom_prompt: str, start_time: Optional[Union[float, int, str]] = None, end_time: Optional[Union[float, int, str]] = None) -> str:
+    """
+    Analyze a video using GPT-4.1 Vision with a custom prompt/question.
+    
+    This tool allows you to ask any custom question about the video, such as:
+    - Counting items in the video
+    - Detecting issues or problems
+    - Describing specific actions or events
+    - Analyzing safety features or equipment
+    
+    Args:
+        video_path: Local path to the video file
+        custom_prompt: Custom prompt or question to ask about the video (e.g., "Count how many boxes are visible", "Are there any safety issues?")
+        start_time: Optional start time in seconds (None for beginning of video). Can be number or string.
+        end_time: Optional end time in seconds (None for end of video). Can be number or string.
+    
+    Returns:
+        Text response to the custom prompt
+    """
+    # Convert inputs to float if needed (for MCP compatibility)
+    if start_time is not None:
+        start_time = float(start_time)
+    if end_time is not None:
+        end_time = float(end_time)
+    
+    return analyze_video_with_prompt_core(video_path, custom_prompt, start_time=start_time, end_time=end_time)
 
 
 @mcp.tool()
