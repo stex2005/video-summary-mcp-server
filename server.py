@@ -18,7 +18,7 @@ mcp = FastMCP("video-summarizer")
 
 
 @mcp.tool()
-def summarize_video(video_path: str, style: str = "short", start_time: Optional[Union[float, int, str]] = None, end_time: Optional[Union[float, int, str]] = None) -> str:
+def summarize_video(video_path: str, style: str = "short", start_time: Optional[Union[float, int, str]] = None, end_time: Optional[Union[float, int, str]] = None, interval_sec: Optional[Union[float, int, str]] = None, max_width: Optional[int] = None) -> str:
     """
     Summarize the content of a video using GPT-4.1 Vision.
     
@@ -27,6 +27,8 @@ def summarize_video(video_path: str, style: str = "short", start_time: Optional[
         style: Summary style - "short", "timeline", "detailed", or "technical" (default: "short")
         start_time: Optional start time in seconds (None for beginning of video)
         end_time: Optional end time in seconds (None for end of video)
+        interval_sec: Interval in seconds between extracted frames (default: 10, reasonable for cost savings). Higher = cheaper.
+        max_width: Maximum frame width in pixels (default: 512, low for cost savings). Lower = cheaper.
     
     Returns:
         Text summary of the video
@@ -36,12 +38,18 @@ def summarize_video(video_path: str, style: str = "short", start_time: Optional[
         start_time = float(start_time)
     if end_time is not None:
         end_time = float(end_time)
+    if interval_sec is not None:
+        interval_sec = float(interval_sec)
     
-    return summarize_video_core(video_path, style=style, start_time=start_time, end_time=end_time)
+    # Use defaults if not specified
+    interval_sec = interval_sec if interval_sec is not None else 10
+    max_width = max_width if max_width is not None else 512
+    
+    return summarize_video_core(video_path, style=style, start_time=start_time, end_time=end_time, interval_sec=interval_sec, max_width=max_width)
 
 
 @mcp.tool()
-def analyze_video_with_prompt(video_path: str, custom_prompt: str, start_time: Optional[Union[float, int, str]] = None, end_time: Optional[Union[float, int, str]] = None) -> str:
+def analyze_video_with_prompt(video_path: str, custom_prompt: str, start_time: Optional[Union[float, int, str]] = None, end_time: Optional[Union[float, int, str]] = None, interval_sec: Optional[Union[float, int, str]] = None, max_width: Optional[int] = None) -> str:
     """
     Analyze a video using GPT-4.1 Vision with a custom prompt/question.
     
@@ -56,6 +64,8 @@ def analyze_video_with_prompt(video_path: str, custom_prompt: str, start_time: O
         custom_prompt: Custom prompt or question to ask about the video (e.g., "Count how many boxes are visible", "Are there any safety issues?")
         start_time: Optional start time in seconds (None for beginning of video). Can be number or string.
         end_time: Optional end time in seconds (None for end of video). Can be number or string.
+        interval_sec: Interval in seconds between extracted frames (default: 10, reasonable for cost savings). Higher = cheaper.
+        max_width: Maximum frame width in pixels (default: 512, low for cost savings). Lower = cheaper.
     
     Returns:
         Text response to the custom prompt
@@ -65,8 +75,14 @@ def analyze_video_with_prompt(video_path: str, custom_prompt: str, start_time: O
         start_time = float(start_time)
     if end_time is not None:
         end_time = float(end_time)
+    if interval_sec is not None:
+        interval_sec = float(interval_sec)
     
-    return analyze_video_with_prompt_core(video_path, custom_prompt, start_time=start_time, end_time=end_time)
+    # Use defaults if not specified
+    interval_sec = interval_sec if interval_sec is not None else 10
+    max_width = max_width if max_width is not None else 512
+    
+    return analyze_video_with_prompt_core(video_path, custom_prompt, start_time=start_time, end_time=end_time, interval_sec=interval_sec, max_width=max_width)
 
 
 @mcp.tool()

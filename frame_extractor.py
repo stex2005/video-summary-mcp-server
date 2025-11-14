@@ -5,18 +5,19 @@ Frame extraction module for video processing.
 import cv2
 
 
-def extract_keyframes(video_path, interval_sec=2, start_time=None, end_time=None):
+def extract_keyframes(video_path, interval_sec=10, start_time=None, end_time=None, max_width=512):
     """
     Extract keyframes from a video at regular intervals.
     
     Args:
         video_path: Path to the video file
-        interval_sec: Interval in seconds between extracted frames (default: 2)
+        interval_sec: Interval in seconds between extracted frames (default: 10, reasonable for cost savings)
         start_time: Start time in seconds (None for beginning of video)
         end_time: End time in seconds (None for end of video)
+        max_width: Maximum width for frame resizing in pixels (default: 512, low for cost savings)
     
     Returns:
-        List of frames (numpy arrays)
+        List of frames (numpy arrays, resized if max_width is set)
     
     Raises:
         ValueError: If video file cannot be opened or time range is invalid
@@ -52,12 +53,20 @@ def extract_keyframes(video_path, interval_sec=2, start_time=None, end_time=None
 
     frames = []
     frame_id = start_frame
+    original_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    original_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     while frame_id <= end_frame:
         ret, frame = cap.read()
         if not ret:
             break
         if frame_id % frame_interval == 0:
+            # Resize frame if max_width is specified and frame is larger
+            if max_width is not None and original_width > max_width:
+                scale = max_width / original_width
+                new_width = max_width
+                new_height = int(original_height * scale)
+                frame = cv2.resize(frame, (new_width, new_height), interpolation=cv2.INTER_AREA)
             frames.append(frame)
         frame_id += 1
 

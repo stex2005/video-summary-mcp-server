@@ -17,7 +17,7 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-def summarize_video(video_path, style="short", start_time=None, end_time=None):
+def summarize_video(video_path, style="short", start_time=None, end_time=None, interval_sec=10, max_width=512):
     """
     Summarize a video using GPT-4.1 Vision.
     
@@ -26,6 +26,8 @@ def summarize_video(video_path, style="short", start_time=None, end_time=None):
         style: Summary style - "short", "timeline", "detailed", or "technical"
         start_time: Start time in seconds (None for beginning of video)
         end_time: End time in seconds (None for end of video)
+        interval_sec: Interval in seconds between extracted frames (default: 10, reasonable for cost savings)
+        max_width: Maximum frame width in pixels (default: 512, low for cost savings)
     
     Returns:
         Text summary of the video
@@ -34,7 +36,7 @@ def summarize_video(video_path, style="short", start_time=None, end_time=None):
         ValueError: If video cannot be opened or time range is invalid
         RuntimeError: If API call fails
     """
-    frames = extract_keyframes(video_path, start_time=start_time, end_time=end_time)
+    frames = extract_keyframes(video_path, start_time=start_time, end_time=end_time, interval_sec=interval_sec, max_width=max_width)
     time_range = ""
     if start_time is not None or end_time is not None:
         start_str = f"{start_time:.1f}s" if start_time is not None else "0s"
@@ -98,7 +100,7 @@ def summarize_video(video_path, style="short", start_time=None, end_time=None):
         return response.choices[0].message.content
 
 
-def analyze_video_with_prompt(video_path, custom_prompt, start_time=None, end_time=None):
+def analyze_video_with_prompt(video_path, custom_prompt, start_time=None, end_time=None, interval_sec=10, max_width=512):
     """
     Analyze a video using GPT-4.1 Vision with a custom prompt/question.
     
@@ -107,6 +109,8 @@ def analyze_video_with_prompt(video_path, custom_prompt, start_time=None, end_ti
         custom_prompt: Custom prompt/question to ask about the video
         start_time: Start time in seconds (None for beginning of video)
         end_time: End time in seconds (None for end of video)
+        interval_sec: Interval in seconds between extracted frames (default: 10, reasonable for cost savings)
+        max_width: Maximum frame width in pixels (default: 512, low for cost savings)
     
     Returns:
         Text response to the custom prompt
@@ -115,7 +119,7 @@ def analyze_video_with_prompt(video_path, custom_prompt, start_time=None, end_ti
         ValueError: If video cannot be opened or time range is invalid
         RuntimeError: If API call fails
     """
-    frames = extract_keyframes(video_path, start_time=start_time, end_time=end_time)
+    frames = extract_keyframes(video_path, start_time=start_time, end_time=end_time, interval_sec=interval_sec, max_width=max_width)
     time_range = ""
     if start_time is not None or end_time is not None:
         start_str = f"{start_time:.1f}s" if start_time is not None else "0s"
