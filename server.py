@@ -1,17 +1,19 @@
 """
-MCP server for video summarization and image analysis using GPT-4.1 Vision.
+MCP server for video and image analysis using GPT-4.1 Vision.
 """
 
 from typing import Optional, Union
 from fastmcp import FastMCP
-from summarizer import (
+from video_analysis import (
     summarize_video as summarize_video_core,
     analyze_video_with_prompt as analyze_video_with_prompt_core,
-    analyze_image as analyze_image_core,
-    count_items as count_items_core,
-    analyze_image_with_prompt as analyze_image_with_prompt_core,
-    get_images as get_images_core,
     get_videos as get_videos_core
+)
+
+from image_analysis import (
+    get_images as get_images_core,
+    analyze_image as analyze_image_core,
+    analyze_image_with_prompt as analyze_image_with_prompt_core
 )
 
 mcp = FastMCP("video-summarizer")

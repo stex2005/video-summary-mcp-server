@@ -3,7 +3,7 @@ CLI runner for video summarization.
 """
 
 import sys
-from summarizer import summarize_video
+from video_analysis import summarize_video
 
 
 def main():
