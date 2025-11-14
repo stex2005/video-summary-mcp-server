@@ -3,7 +3,14 @@ MCP server for video summarization and image analysis using GPT-4.1 Vision.
 """
 
 from fastmcp import FastMCP
-from summarizer import summarize_video as summarize_video_core, analyze_image as analyze_image_core, count_items as count_items_core, analyze_image_with_prompt as analyze_image_with_prompt_core
+from summarizer import (
+    summarize_video as summarize_video_core,
+    analyze_image as analyze_image_core,
+    count_items as count_items_core,
+    analyze_image_with_prompt as analyze_image_with_prompt_core,
+    get_images as get_images_core,
+    get_videos as get_videos_core
+)
 
 mcp = FastMCP("video-summarizer")
 
@@ -73,6 +80,28 @@ def analyze_image_with_prompt(image_path: str, custom_prompt: str) -> str:
         Text response to the custom prompt
     """
     return analyze_image_with_prompt_core(image_path, custom_prompt)
+
+
+@mcp.tool()
+def get_images() -> list[str]:
+    """
+    List all available image files in the images directory.
+    
+    Returns:
+        List of image file paths (e.g., ["images/photo1.jpg", "images/photo2.png"])
+    """
+    return get_images_core()
+
+
+@mcp.tool()
+def get_videos() -> list[str]:
+    """
+    List all available video files in the videos directory.
+    
+    Returns:
+        List of video file paths (e.g., ["videos/video1.mp4", "videos/video2.avi"])
+    """
+    return get_videos_core()
 
 
 if __name__ == "__main__":

@@ -1,9 +1,10 @@
 """
-Core video summarization and image analysis module using GPT-4.1 Vision.
+Core video and image analysis module using GPT-4.1 Vision.
 """
 
 import os
 import cv2
+from pathlib import Path
 from openai import OpenAI
 from dotenv import load_dotenv
 from frame_extractor import extract_keyframes
@@ -320,4 +321,48 @@ def analyze_image_with_prompt(image_path, custom_prompt):
             max_tokens=1000
         )
         return response.choices[0].message.content
+
+
+def get_images():
+    """
+    List all available image files in the images directory.
+    
+    Returns:
+        List of image file paths relative to the images directory
+    """
+    images_dir = Path("images")
+    if not images_dir.exists():
+        return []
+    
+    # Common image extensions
+    image_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.tif', '.webp', '.gif', '.pbm', '.pgm', '.ppm'}
+    
+    image_files = []
+    for file in images_dir.iterdir():
+        if file.is_file() and file.suffix.lower() in image_extensions:
+            image_files.append(f"images/{file.name}")
+    
+    return sorted(image_files)
+
+
+def get_videos():
+    """
+    List all available video files in the videos directory.
+    
+    Returns:
+        List of video file paths relative to the videos directory
+    """
+    videos_dir = Path("videos")
+    if not videos_dir.exists():
+        return []
+    
+    # Common video extensions
+    video_extensions = {'.mp4', '.avi', '.mov', '.mkv', '.webm', '.flv', '.wmv', '.m4v', '.3gp'}
+    
+    video_files = []
+    for file in videos_dir.iterdir():
+        if file.is_file() and file.suffix.lower() in video_extensions:
+            video_files.append(f"videos/{file.name}")
+    
+    return sorted(video_files)
 
