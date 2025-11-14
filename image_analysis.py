@@ -16,7 +16,7 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-def analyze_image(image_path, style="short"):
+def summarize_image(image_path, style="short", model="gpt-4o-mini"):
     """
     Analyze an image using GPT-4.1 Vision.
     
@@ -26,6 +26,7 @@ def analyze_image(image_path, style="short"):
     Args:
         image_path: Path to the image file (supports JPEG, PNG, BMP, TIFF, WebP, etc.)
         style: Analysis style - "short", "detailed", "technical", or "descriptive"
+        model: Model to use (default: "gpt-4o-mini" for cost savings, options: "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4.1")
     
     Returns:
         Text analysis of the image
@@ -49,10 +50,12 @@ def analyze_image(image_path, style="short"):
     
     prompt = build_analysis_prompt(style)
     
-    # Try GPT-4.1 Vision API (Responses API format)
+    # Try GPT-4.1 Vision API (Responses API format) - only for gpt-4.1
     try:
+        if model != "gpt-4.1":
+            raise AttributeError("Responses API only for gpt-4.1")
         response = client.responses.create(
-            model="gpt-4.1",
+            model=model,
             input=[
                 {
                     "type": "input_image",
@@ -64,14 +67,15 @@ def analyze_image(image_path, style="short"):
                 }
             ]
         )
-        return response.output_text
+        result = response.output_text
+        return f"{result}\n\n[Model used: {model}]"
     except (AttributeError, Exception) as e:
         # Fallback to standard chat.completions API if responses.create doesn't exist
         import base64
         base64_image = base64.b64encode(jpeg).decode('utf-8')
         
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model=model,
             messages=[
                 {
                     "role": "user",
@@ -91,10 +95,11 @@ def analyze_image(image_path, style="short"):
             ],
             max_tokens=1000
         )
-        return response.choices[0].message.content
+        result = response.choices[0].message.content
+        return f"{result}\n\n[Model used: {model}]"
 
 
-def count_items(image_path, object_name):
+def count_items(image_path, object_name, model="gpt-4o-mini"):
     """
     Count specific objects in an image using GPT-4.1 Vision.
     
@@ -104,6 +109,7 @@ def count_items(image_path, object_name):
     Args:
         image_path: Path to the image file (supports JPEG, PNG, BMP, TIFF, WebP, etc.)
         object_name: Name of the object to count (e.g., "person", "car", "robot")
+        model: Model to use (default: "gpt-4o-mini" for cost savings, options: "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4.1")
     
     Returns:
         String containing the count and any additional information
@@ -127,10 +133,12 @@ def count_items(image_path, object_name):
     
     prompt = build_count_prompt(object_name)
     
-    # Try GPT-4.1 Vision API (Responses API format)
+    # Try GPT-4.1 Vision API (Responses API format) - only for gpt-4.1
     try:
+        if model != "gpt-4.1":
+            raise AttributeError("Responses API only for gpt-4.1")
         response = client.responses.create(
-            model="gpt-4.1",
+            model=model,
             input=[
                 {
                     "type": "input_image",
@@ -142,14 +150,15 @@ def count_items(image_path, object_name):
                 }
             ]
         )
-        return response.output_text
+        result = response.output_text
+        return f"{result}\n\n[Model used: {model}]"
     except (AttributeError, Exception) as e:
         # Fallback to standard chat.completions API if responses.create doesn't exist
         import base64
         base64_image = base64.b64encode(jpeg).decode('utf-8')
         
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model=model,
             messages=[
                 {
                     "role": "user",
@@ -169,10 +178,11 @@ def count_items(image_path, object_name):
             ],
             max_tokens=200
         )
-        return response.choices[0].message.content
+        result = response.choices[0].message.content
+        return f"{result}\n\n[Model used: {model}]"
 
 
-def analyze_image_with_prompt(image_path, custom_prompt):
+def analyze_image_with_prompt(image_path, custom_prompt, model="gpt-4o-mini"):
     """
     Analyze an image using GPT-4.1 Vision with a custom prompt.
     
@@ -182,6 +192,7 @@ def analyze_image_with_prompt(image_path, custom_prompt):
     Args:
         image_path: Path to the image file (supports JPEG, PNG, BMP, TIFF, WebP, etc.)
         custom_prompt: Custom prompt/question to ask about the image
+        model: Model to use (default: "gpt-4o-mini" for cost savings, options: "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4.1")
     
     Returns:
         Text response to the custom prompt
@@ -203,10 +214,12 @@ def analyze_image_with_prompt(image_path, custom_prompt):
     # Encode image as JPEG
     jpeg = encode_jpeg(frame)
     
-    # Try GPT-4.1 Vision API (Responses API format)
+    # Try GPT-4.1 Vision API (Responses API format) - only for gpt-4.1
     try:
+        if model != "gpt-4.1":
+            raise AttributeError("Responses API only for gpt-4.1")
         response = client.responses.create(
-            model="gpt-4.1",
+            model=model,
             input=[
                 {
                     "type": "input_image",
@@ -218,14 +231,15 @@ def analyze_image_with_prompt(image_path, custom_prompt):
                 }
             ]
         )
-        return response.output_text
+        result = response.output_text
+        return f"{result}\n\n[Model used: {model}]"
     except (AttributeError, Exception) as e:
         # Fallback to standard chat.completions API if responses.create doesn't exist
         import base64
         base64_image = base64.b64encode(jpeg).decode('utf-8')
         
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model=model,
             messages=[
                 {
                     "role": "user",
@@ -245,7 +259,8 @@ def analyze_image_with_prompt(image_path, custom_prompt):
             ],
             max_tokens=1000
         )
-        return response.choices[0].message.content
+        result = response.choices[0].message.content
+        return f"{result}\n\n[Model used: {model}]"
 
 
 def get_images():

@@ -12,7 +12,7 @@ from video_analysis import (
 
 from image_analysis import (
     get_images as get_images_core,
-    analyze_image as analyze_image_core,
+    summarize_image as analyze_image_core,
     analyze_image_with_prompt as analyze_image_with_prompt_core
 )
 
@@ -20,7 +20,7 @@ mcp = FastMCP("video-summarizer")
 
 
 @mcp.tool()
-def summarize_video(video_path: str, style: str = "short", start_time: Optional[Union[float, int, str]] = None, end_time: Optional[Union[float, int, str]] = None, interval_sec: Optional[Union[float, int, str]] = None, max_width: Optional[int] = None) -> str:
+def summarize_video(video_path: str, style: str = "short", start_time: Optional[Union[float, int, str]] = None, end_time: Optional[Union[float, int, str]] = None, interval_sec: Optional[Union[float, int, str]] = None, max_width: Optional[Union[int, str]] = None, model: str = "gpt-4o-mini") -> str:
     """
     Summarize the content of a video using GPT-4.1 Vision.
     
@@ -31,6 +31,7 @@ def summarize_video(video_path: str, style: str = "short", start_time: Optional[
         end_time: Optional end time in seconds (None for end of video)
         interval_sec: Interval in seconds between extracted frames (default: 10, reasonable for cost savings). Higher = cheaper.
         max_width: Maximum frame width in pixels (default: 512, low for cost savings). Lower = cheaper.
+        model: Model to use (default: "gpt-4o-mini" for cost savings, options: "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4.1")
     
     Returns:
         Text summary of the video
@@ -42,16 +43,18 @@ def summarize_video(video_path: str, style: str = "short", start_time: Optional[
         end_time = float(end_time)
     if interval_sec is not None:
         interval_sec = float(interval_sec)
+    if max_width is not None:
+        max_width = int(max_width)
     
     # Use defaults if not specified
     interval_sec = interval_sec if interval_sec is not None else 10
     max_width = max_width if max_width is not None else 512
     
-    return summarize_video_core(video_path, style=style, start_time=start_time, end_time=end_time, interval_sec=interval_sec, max_width=max_width)
+    return summarize_video_core(video_path, style=style, start_time=start_time, end_time=end_time, interval_sec=interval_sec, max_width=max_width, model=model)
 
 
 @mcp.tool()
-def analyze_video_with_prompt(video_path: str, custom_prompt: str, start_time: Optional[Union[float, int, str]] = None, end_time: Optional[Union[float, int, str]] = None, interval_sec: Optional[Union[float, int, str]] = None, max_width: Optional[int] = None) -> str:
+def analyze_video_with_prompt(video_path: str, custom_prompt: str, start_time: Optional[Union[float, int, str]] = None, end_time: Optional[Union[float, int, str]] = None, interval_sec: Optional[Union[float, int, str]] = None, max_width: Optional[Union[int, str]] = None, model: str = "gpt-4o-mini") -> str:
     """
     Analyze a video using GPT-4.1 Vision with a custom prompt/question.
     
@@ -68,6 +71,7 @@ def analyze_video_with_prompt(video_path: str, custom_prompt: str, start_time: O
         end_time: Optional end time in seconds (None for end of video). Can be number or string.
         interval_sec: Interval in seconds between extracted frames (default: 10, reasonable for cost savings). Higher = cheaper.
         max_width: Maximum frame width in pixels (default: 512, low for cost savings). Lower = cheaper.
+        model: Model to use (default: "gpt-4o-mini" for cost savings, options: "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4.1")
     
     Returns:
         Text response to the custom prompt
@@ -79,16 +83,18 @@ def analyze_video_with_prompt(video_path: str, custom_prompt: str, start_time: O
         end_time = float(end_time)
     if interval_sec is not None:
         interval_sec = float(interval_sec)
+    if max_width is not None:
+        max_width = int(max_width)
     
     # Use defaults if not specified
     interval_sec = interval_sec if interval_sec is not None else 10
     max_width = max_width if max_width is not None else 512
     
-    return analyze_video_with_prompt_core(video_path, custom_prompt, start_time=start_time, end_time=end_time, interval_sec=interval_sec, max_width=max_width)
+    return analyze_video_with_prompt_core(video_path, custom_prompt, start_time=start_time, end_time=end_time, interval_sec=interval_sec, max_width=max_width, model=model)
 
 
 @mcp.tool()
-def analyze_image(image_path: str, style: str = "short") -> str:
+def analyze_image(image_path: str, style: str = "short", model: str = "gpt-4o-mini") -> str:
     """
     Analyze the content of an image using GPT-4.1 Vision.
     
@@ -97,15 +103,16 @@ def analyze_image(image_path: str, style: str = "short") -> str:
     Args:
         image_path: Local path to the image file (supports JPEG, PNG, BMP, TIFF, WebP, etc.)
         style: Analysis style - "short", "detailed", "technical", or "descriptive" (default: "short")
+        model: Model to use (default: "gpt-4o-mini" for cost savings, options: "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4.1")
     
     Returns:
         Text analysis of the image
     """
-    return analyze_image_core(image_path, style=style)
+    return analyze_image_core(image_path, style=style, model=model)
 
 
 @mcp.tool()
-def count_items(image_path: str, object_name: str) -> str:
+def count_items(image_path: str, object_name: str, model: str = "gpt-4o-mini") -> str:
     """
     Count specific objects in an image using GPT-4.1 Vision.
     
@@ -114,15 +121,16 @@ def count_items(image_path: str, object_name: str) -> str:
     Args:
         image_path: Local path to the image file (supports JPEG, PNG, BMP, TIFF, WebP, etc.)
         object_name: Name of the object to count (e.g., "person", "car", "robot", "box")
+        model: Model to use (default: "gpt-4o-mini" for cost savings, options: "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4.1")
     
     Returns:
         String containing the count of the specified objects
     """
-    return count_items_core(image_path, object_name)
+    return count_items_core(image_path, object_name, model=model)
 
 
 @mcp.tool()
-def analyze_image_with_prompt(image_path: str, custom_prompt: str) -> str:
+def analyze_image_with_prompt(image_path: str, custom_prompt: str, model: str = "gpt-4o-mini") -> str:
     """
     Analyze an image using GPT-4.1 Vision with a custom prompt/question.
     
@@ -132,11 +140,12 @@ def analyze_image_with_prompt(image_path: str, custom_prompt: str) -> str:
     Args:
         image_path: Local path to the image file (supports JPEG, PNG, BMP, TIFF, WebP, etc.)
         custom_prompt: Custom prompt or question to ask about the image (e.g., "What color is the robot?", "Describe the safety features visible")
+        model: Model to use (default: "gpt-4o-mini" for cost savings, options: "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4.1")
     
     Returns:
         Text response to the custom prompt
     """
-    return analyze_image_with_prompt_core(image_path, custom_prompt)
+    return analyze_image_with_prompt_core(image_path, custom_prompt, model=model)
 
 
 @mcp.tool()

@@ -5,7 +5,7 @@ Frame extraction module for video processing.
 import cv2
 
 
-def extract_keyframes(video_path, interval_sec=10, start_time=None, end_time=None, max_width=512):
+def extract_keyframes(video_path, interval_sec=2, start_time=None, end_time=None, max_width=512):
     """
     Extract keyframes from a video at regular intervals.
     
