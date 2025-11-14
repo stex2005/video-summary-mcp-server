@@ -16,7 +16,7 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-def summarize_image(image_path, style="short", model="gpt-4o-mini"):
+def summarize_image(image_path, style="short", model="gpt-4o-mini", max_width=512):
     """
     Analyze an image using GPT-4.1 Vision.
     
@@ -27,6 +27,7 @@ def summarize_image(image_path, style="short", model="gpt-4o-mini"):
         image_path: Path to the image file (supports JPEG, PNG, BMP, TIFF, WebP, etc.)
         style: Analysis style - "short", "detailed", "technical", or "descriptive"
         model: Model to use (default: "gpt-4o-mini" for cost savings, options: "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4.1")
+        max_width: Maximum frame width in pixels (default: 512, low for cost savings). Lower = cheaper.
     
     Returns:
         Text analysis of the image
@@ -44,6 +45,14 @@ def summarize_image(image_path, style="short", model="gpt-4o-mini"):
         )
     
     print(f"Analyzing image: {image_path}")
+    
+    # Resize image if max_width is specified and image is larger
+    original_height, original_width = frame.shape[:2]
+    if max_width is not None and original_width > max_width:
+        scale = max_width / original_width
+        new_width = max_width
+        new_height = int(original_height * scale)
+        frame = cv2.resize(frame, (new_width, new_height), interpolation=cv2.INTER_AREA)
     
     # Encode image as JPEG
     jpeg = encode_jpeg(frame)
@@ -99,7 +108,7 @@ def summarize_image(image_path, style="short", model="gpt-4o-mini"):
         return f"{result}\n\n[Model used: {model}]"
 
 
-def count_items(image_path, object_name, model="gpt-4o-mini"):
+def count_items(image_path, object_name, model="gpt-4o-mini", max_width=512):
     """
     Count specific objects in an image using GPT-4.1 Vision.
     
@@ -110,6 +119,7 @@ def count_items(image_path, object_name, model="gpt-4o-mini"):
         image_path: Path to the image file (supports JPEG, PNG, BMP, TIFF, WebP, etc.)
         object_name: Name of the object to count (e.g., "person", "car", "robot")
         model: Model to use (default: "gpt-4o-mini" for cost savings, options: "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4.1")
+        max_width: Maximum frame width in pixels (default: 512, low for cost savings). Lower = cheaper.
     
     Returns:
         String containing the count and any additional information
@@ -127,6 +137,14 @@ def count_items(image_path, object_name, model="gpt-4o-mini"):
         )
     
     print(f"Counting {object_name} in image: {image_path}")
+    
+    # Resize image if max_width is specified and image is larger
+    original_height, original_width = frame.shape[:2]
+    if max_width is not None and original_width > max_width:
+        scale = max_width / original_width
+        new_width = max_width
+        new_height = int(original_height * scale)
+        frame = cv2.resize(frame, (new_width, new_height), interpolation=cv2.INTER_AREA)
     
     # Encode image as JPEG
     jpeg = encode_jpeg(frame)
@@ -182,7 +200,7 @@ def count_items(image_path, object_name, model="gpt-4o-mini"):
         return f"{result}\n\n[Model used: {model}]"
 
 
-def analyze_image_with_prompt(image_path, custom_prompt, model="gpt-4o-mini"):
+def analyze_image_with_prompt(image_path, custom_prompt, model="gpt-4o-mini", max_width=512):
     """
     Analyze an image using GPT-4.1 Vision with a custom prompt.
     
@@ -193,6 +211,7 @@ def analyze_image_with_prompt(image_path, custom_prompt, model="gpt-4o-mini"):
         image_path: Path to the image file (supports JPEG, PNG, BMP, TIFF, WebP, etc.)
         custom_prompt: Custom prompt/question to ask about the image
         model: Model to use (default: "gpt-4o-mini" for cost savings, options: "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4.1")
+        max_width: Maximum frame width in pixels (default: 512, low for cost savings). Lower = cheaper.
     
     Returns:
         Text response to the custom prompt
@@ -210,6 +229,14 @@ def analyze_image_with_prompt(image_path, custom_prompt, model="gpt-4o-mini"):
         )
     
     print(f"Analyzing image with custom prompt: {image_path}")
+    
+    # Resize image if max_width is specified and image is larger
+    original_height, original_width = frame.shape[:2]
+    if max_width is not None and original_width > max_width:
+        scale = max_width / original_width
+        new_width = max_width
+        new_height = int(original_height * scale)
+        frame = cv2.resize(frame, (new_width, new_height), interpolation=cv2.INTER_AREA)
     
     # Encode image as JPEG
     jpeg = encode_jpeg(frame)

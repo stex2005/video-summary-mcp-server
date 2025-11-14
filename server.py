@@ -13,6 +13,7 @@ from video_analysis import (
 from image_analysis import (
     get_images as get_images_core,
     summarize_image as analyze_image_core,
+    count_items as count_items_core,
     analyze_image_with_prompt as analyze_image_with_prompt_core
 )
 
@@ -94,7 +95,7 @@ def analyze_video_with_prompt(video_path: str, custom_prompt: str, start_time: O
 
 
 @mcp.tool()
-def analyze_image(image_path: str, style: str = "short", model: str = "gpt-4o-mini") -> str:
+def summarize_image(image_path: str, style: str = "short", model: str = "gpt-4o-mini", max_width: Optional[Union[int, str]] = None) -> str:
     """
     Analyze the content of an image using GPT-4.1 Vision.
     
@@ -104,15 +105,19 @@ def analyze_image(image_path: str, style: str = "short", model: str = "gpt-4o-mi
         image_path: Local path to the image file (supports JPEG, PNG, BMP, TIFF, WebP, etc.)
         style: Analysis style - "short", "detailed", "technical", or "descriptive" (default: "short")
         model: Model to use (default: "gpt-4o-mini" for cost savings, options: "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4.1")
+        max_width: Maximum image width in pixels (default: 512, low for cost savings). Lower = cheaper.
     
     Returns:
         Text analysis of the image
     """
-    return analyze_image_core(image_path, style=style, model=model)
+    if max_width is not None:
+        max_width = int(max_width)
+    max_width = max_width if max_width is not None else 512
+    return analyze_image_core(image_path, style=style, model=model, max_width=max_width)
 
 
 @mcp.tool()
-def count_items(image_path: str, object_name: str, model: str = "gpt-4o-mini") -> str:
+def count_items(image_path: str, object_name: str, model: str = "gpt-4o-mini", max_width: Optional[Union[int, str]] = None) -> str:
     """
     Count specific objects in an image using GPT-4.1 Vision.
     
@@ -122,15 +127,19 @@ def count_items(image_path: str, object_name: str, model: str = "gpt-4o-mini") -
         image_path: Local path to the image file (supports JPEG, PNG, BMP, TIFF, WebP, etc.)
         object_name: Name of the object to count (e.g., "person", "car", "robot", "box")
         model: Model to use (default: "gpt-4o-mini" for cost savings, options: "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4.1")
+        max_width: Maximum image width in pixels (default: 512, low for cost savings). Lower = cheaper.
     
     Returns:
         String containing the count of the specified objects
     """
-    return count_items_core(image_path, object_name, model=model)
+    if max_width is not None:
+        max_width = int(max_width)
+    max_width = max_width if max_width is not None else 512
+    return count_items_core(image_path, object_name, model=model, max_width=max_width)
 
 
 @mcp.tool()
-def analyze_image_with_prompt(image_path: str, custom_prompt: str, model: str = "gpt-4o-mini") -> str:
+def analyze_image_with_prompt(image_path: str, custom_prompt: str, model: str = "gpt-4o-mini", max_width: Optional[Union[int, str]] = None) -> str:
     """
     Analyze an image using GPT-4.1 Vision with a custom prompt/question.
     
@@ -141,11 +150,15 @@ def analyze_image_with_prompt(image_path: str, custom_prompt: str, model: str = 
         image_path: Local path to the image file (supports JPEG, PNG, BMP, TIFF, WebP, etc.)
         custom_prompt: Custom prompt or question to ask about the image (e.g., "What color is the robot?", "Describe the safety features visible")
         model: Model to use (default: "gpt-4o-mini" for cost savings, options: "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-4.1")
+        max_width: Maximum image width in pixels (default: 512, low for cost savings). Lower = cheaper.
     
     Returns:
         Text response to the custom prompt
     """
-    return analyze_image_with_prompt_core(image_path, custom_prompt, model=model)
+    if max_width is not None:
+        max_width = int(max_width)
+    max_width = max_width if max_width is not None else 512
+    return analyze_image_with_prompt_core(image_path, custom_prompt, model=model, max_width=max_width)
 
 
 @mcp.tool()
