@@ -3,6 +3,7 @@ Core video analysis module using GPT-4.1 Vision.
 """
 
 import os
+from pathlib import Path
 from openai import OpenAI
 from dotenv import load_dotenv
 from frame_extractor import extract_keyframes
