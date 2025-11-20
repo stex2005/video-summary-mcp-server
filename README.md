@@ -140,12 +140,9 @@ video-summary-mcp-server/
 
 ### Option 1: Using .env file (Recommended)
 
-1. Create a `.env` file in the project root:
-```bash
-cp .env.example .env
-```
+1. Create a `.env` file in the project root (any text editor is fine).
 
-2. Edit `.env` and add your OpenAI API key:
+2. Add your OpenAI API key:
 ```
 OPENAI_API_KEY=your-actual-api-key-here
 ```
